@@ -6,7 +6,6 @@ RUN gradle bootJar --no-daemon
 
 # Stage 2: Package
 FROM openjdk:17-jdk-slim
-WORKDIR /app
 COPY --from=build /build/libs/TunelyfUI-1.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
