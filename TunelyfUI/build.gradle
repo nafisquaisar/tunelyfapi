@@ -5,8 +5,11 @@ plugins {
 }
 
 group = 'com.tunelyf.nf'
-version = '0.0.1-SNAPSHOT'
+version = '1'
 
+bootJar {
+    archiveFileName = 'TunelyfUI-1.jar'
+}
 
 
 java {
