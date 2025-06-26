@@ -1,9 +1,9 @@
 services:
   - type: web
     name: tunelyfui
-    runtime: image
-    dockerfilePath: ./TunelyfUI/Dockerfile
+    runtime: docker
     plan: free
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
