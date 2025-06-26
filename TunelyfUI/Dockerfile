@@ -1,16 +1,17 @@
-FROM eclipse-temurin:17-jdk
+# --- Build Stage ---
+FROM gradle:8.4-jdk17 AS build
 
 WORKDIR /app
-
 COPY . .
 
-# Set JAVA_HOME explicitly
-ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
+RUN ./gradlew clean bootJar --no-daemon
 
-RUN chmod +x ./gradlew
-RUN ./gradlew build
+# --- Runtime Stage ---
+FROM eclipse-temurin:17-jdk-jammy
 
+WORKDIR /app
 EXPOSE 8080
 
-CMD ["java", "-jar", "build/libs/TunelyfUI-0.0.1-SNAPSHOT.jar"]
+COPY --from=build /app/build/libs/TunelyfUI-1.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
