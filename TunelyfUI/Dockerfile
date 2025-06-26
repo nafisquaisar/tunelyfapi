@@ -4,6 +4,10 @@ WORKDIR /app
 
 COPY . .
 
+# Set JAVA_HOME explicitly
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
 RUN chmod +x ./gradlew
 RUN ./gradlew build
 
