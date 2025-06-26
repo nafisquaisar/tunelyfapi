@@ -1,0 +1,170 @@
+package com.tunelyf.nf.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.tunelyf.nf.model.Genre;
+import com.tunelyf.nf.model.PlaybackHistory;
+import com.tunelyf.nf.model.Song;
+import com.tunelyf.nf.repository.FavoriteRepository;
+import com.tunelyf.nf.repository.GenreRepository;
+import com.tunelyf.nf.repository.PlaybackHistoryRepository;
+import com.tunelyf.nf.repository.SongRepository;
+
+@Service
+public class SongServiceImpl implements SongService {
+
+    @Autowired
+    private SongRepository songRepository;
+    @Autowired
+    private PlaybackHistoryRepository playbackHistoryRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+    @Autowired
+    private GenreRepository genreRepository;
+    @Autowired
+    private FirebaseStorageService firebaseStorageService;
+
+    @Override
+    public List<Song> getAllVisibleSongs() {
+        return songRepository.findByIsHiddenFalse();
+    }
+
+    @Override
+    public List<Song> getAllSongs() {
+        return songRepository.findAll(); // or use findByIsHiddenFalse();
+    }
+
+    @Override
+    public List<Song> getSongsByArtist(String artist) {
+        return songRepository.findByArtistIgnoreCase(artist);
+    }
+
+    @Override
+    public List<Song> getSongsByGenre(String genre) {
+        return songRepository.findByGenreIgnoreCase(genre);
+    }
+
+    
+  
+
+    @Override
+    public Song updateSong(Long id, String title, String artist, String genre,
+                           MultipartFile thumbnailFile, MultipartFile songFile) {
+        Optional<Song> songOpt = songRepository.findById(id);
+        if (songOpt.isPresent()) {
+            Song song = songOpt.get();
+            song.setTitle(title);
+            song.setArtist(artist);
+            Genre genreObj = genreRepository.findByNameIgnoreCase(genre)
+                    .orElseThrow(() -> new RuntimeException("Genre not found: " + genre));
+            song.setGenre(genreObj);
+
+            if (thumbnailFile != null && !thumbnailFile.isEmpty()) {
+                String thumbnailUrl = firebaseStorageService.uploadFile(thumbnailFile, "thumbnails/");
+                song.setThumbnail(thumbnailUrl);
+            }
+
+            if (songFile != null && !songFile.isEmpty()) {
+                String songUrl = firebaseStorageService.uploadFile(songFile, "songs/");
+                song.setUrl(songUrl);
+            }
+
+            return songRepository.save(song);
+        }
+        return null;
+    }
+
+
+    @Override
+    public void deleteSong(Long id) {
+    	Song song = songRepository.findById(id).orElse(null);
+        if (song != null) {
+            // ✅ Delete from Firebase if URL exists
+            firebaseStorageService.deleteFileByUrl(song.getUrl());
+            firebaseStorageService.deleteFileByUrl(song.getThumbnail());
+
+            songRepository.deleteById(id);
+        }
+
+    }
+
+    @Override
+    public Song toggleHideSong(Long id) {
+        Song song = songRepository.findById(id).orElse(null);
+        if (song != null) {
+            song.setHidden(!song.isHidden());
+            return songRepository.save(song);
+        }
+        return null;
+    }
+    @Override
+    public void recordPlayback(String uid, Long songId) {
+        Optional<Song> songOpt = songRepository.findById(songId);
+        songOpt.ifPresent(song -> {
+            PlaybackHistory history = new PlaybackHistory();
+            history.setUid(uid);
+            history.setSong(song);
+            playbackHistoryRepository.save(history);
+        });
+    }
+
+    @Override
+    public List<Song> getRecentlyPlayedSongs(String uid) {
+        List<PlaybackHistory> historyList = playbackHistoryRepository.findTop20ByUidOrderByPlayedAtDesc(uid);
+        return historyList.stream().map(PlaybackHistory::getSong).distinct().toList();
+    }
+    
+    @Override
+    public List<Song> searchSongs(String query) {
+        return songRepository.findByTitleContainingIgnoreCaseOrArtistContainingIgnoreCase(query, query)
+                             .stream()
+                             .filter(song -> !song.isHidden()) // only return visible songs
+                             .toList();
+    }
+
+
+    @Override
+    public List<Song> getTrendingSongs() {
+
+        // Get top 20 songIds with highest favorite count
+        List<Long> topSongIds = favoriteRepository.findTopTrendingSongIds(PageRequest.of(0, 20));
+
+        // Fetch songs by ID and maintain order
+        return topSongIds.stream()
+            .map(id -> songRepository.findById(id))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .filter(song -> !song.isHidden())
+            .toList();
+    }
+   
+    
+    @Override
+    public Song uploadSong(String title, String artist, String genre,
+            MultipartFile thumbnailFile, MultipartFile songFile) {
+			String thumbnailUrl = firebaseStorageService.uploadFile(thumbnailFile, "thumbnails/");
+			String songUrl = firebaseStorageService.uploadFile(songFile, "songs/");
+			
+			Song song = new Song();
+			song.setTitle(title);
+			song.setArtist(artist);
+			Genre genreObj = genreRepository.findByNameIgnoreCase(genre)
+			        .orElseThrow(() -> new RuntimeException("Genre not found: " + genre));
+			song.setGenre(genreObj);
+
+			song.setThumbnail(thumbnailUrl);
+			song.setUrl(songUrl);
+			song.setHidden(true);
+			
+			return songRepository.save(song);
+	}
+
+	
+}

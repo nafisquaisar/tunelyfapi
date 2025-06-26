@@ -1,0 +1,66 @@
+package com.tunelyf.nf.service;
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class SongServiceImpl implements SongService {
+
+    @Autowired
+    private SongRepository songRepository;
+
+    @Override
+    public List<Song> getAllVisibleSongs() {
+        return songRepository.findByIsHiddenFalse();
+    }
+
+    @Override
+    public List<Song> getSongsByArtist(String artist) {
+        return songRepository.findByArtistIgnoreCase(artist);
+    }
+
+    @Override
+    public List<Song> getSongsByGenre(String genre) {
+        return songRepository.findByGenreIgnoreCase(genre);
+    }
+
+    @Override
+    public Song uploadSong(Song song) {
+        return songRepository.save(song);
+    }
+
+    @Override
+    public Song updateSong(Long id, Song newSong) {
+        Optional<Song> songOpt = songRepository.findById(id);
+        if (songOpt.isPresent()) {
+            Song song = songOpt.get();
+            song.setTitle(newSong.getTitle());
+            song.setArtist(newSong.getArtist());
+            song.setGenre(newSong.getGenre());
+            song.setUrl(newSong.getUrl());
+            song.setThumbnail(newSong.getThumbnail());
+            return songRepository.save(song);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteSong(Long id) {
+        songRepository.deleteById(id);
+    }
+
+    @Override
+    public Song toggleHideSong(Long id) {
+        Song song = songRepository.findById(id).orElse(null);
+        if (song != null) {
+            song.setHidden(!song.isHidden());
+            return songRepository.save(song);
+        }
+        return null;
+    }
+}

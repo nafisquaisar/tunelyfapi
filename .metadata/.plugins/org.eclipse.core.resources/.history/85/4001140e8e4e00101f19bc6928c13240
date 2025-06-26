@@ -1,0 +1,66 @@
+package com.tunelyf.nf.controller;
+
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.tunelyf.nf.model.Song;
+import com.tunelyf.nf.service.SongService;
+
+
+
+@RestController
+@RequestMapping("/api/songs")
+@CrossOrigin(origins = "*") // for Android access
+public class SongController {
+
+    
+    @Autowired
+    private SongService songService;
+
+    @GetMapping
+    public List<Song> getAllVisibleSongs() {
+        return songService.getAllVisibleSongs();
+    }
+
+    @GetMapping("/artist/{name}")
+    public List<Song> getSongsByArtist(@PathVariable String name) {
+        return songService.getSongsByArtist(name);
+    }
+
+    @GetMapping("/genre/{genre}")
+    public List<Song> getSongsByGenre(@PathVariable String genre) {
+        return songService.getSongsByGenre(genre);
+    }
+
+    @PostMapping("/upload")
+    public Song uploadSong(@RequestBody Song song) {
+        return songService.uploadSong(song);
+    }
+
+    @PutMapping("/{id}")
+    public Song updateSong(@PathVariable Long id, @RequestBody Song song) {
+        return songService.updateSong(id, song);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteSong(@PathVariable Long id) {
+        songService.deleteSong(id);
+    }
+
+    @PatchMapping("/{id}/hide")
+    public Song toggleHide(@PathVariable Long id) {
+        return songService.toggleHideSong(id);
+    }
+}

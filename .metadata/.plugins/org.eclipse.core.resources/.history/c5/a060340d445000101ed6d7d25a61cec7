@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Genre Songs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #141E30, #243B55);
+      color: white;
+      padding: 20px;
+      margin-bottom: 100px;
+    }
+
+    .back-button {
+      background: #4db8ff;
+      color: #fff;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .back-button:hover {
+      background: #3399ff;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    .search-sort-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 60%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #394b6b;
+      background-color: #2d3e5f;
+      color: white;
+    }
+
+    .search-input::placeholder {
+      color: #bbb;
+    }
+
+    .sort-select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #394b6b;
+      background-color: #2d3e5f;
+      color: white;
+    }
+
+    .song-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 30px;
+      padding: 10px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .song-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid #394b6b;
+      cursor: pointer;
+    }
+
+    .song-thumb {
+      width: 45px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .song-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-meta {
+      font-size: 12px;
+      color: #bbb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .thumb-wrapper {
+      position: relative;
+      width: 45px;
+      height: 45px;
+    }
+
+    .play-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      background-color: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      padding: 4px 6px;
+      display: none;
+    }
+
+    .thumb-wrapper:hover .play-icon {
+      display: block;
+    }
+
+    .song-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .song-container::-webkit-scrollbar-thumb {
+      background: #4db8ff;
+      border-radius: 3px;
+    }
+
+    #playerBar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #1f2a40;
+      border-top: 1px solid #394b6b;
+      display: flex;
+      align-items: center;
+      padding: 15px 30px;
+      z-index: 1001;
+      height: 80px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+    }
+
+    #playerThumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-right: 20px;
+    }
+
+    .player-info {
+      flex: 1;
+      color: #fff;
+    }
+
+    #playerTitle {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #playerArtist {
+      font-size: 13px;
+      color: #bbb;
+    }
+
+    #audioPlayer {
+      width: 400px;
+      height: 50px;
+      background: #2d3e5f;
+      border-radius: 8px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-button" onclick="window.history.back()">← Back</button>
+  <h2 th:text="'Songs in ' + ${genreName}">Genre Songs</h2>
+
+  <div class="search-sort-bar">
+    <input type="text" placeholder="Search songs..." class="search-input" />
+    <select class="sort-select">
+      <option value="latest">Sort by: Latest</option>
+      <option value="popular">Most Popular</option>
+      <option value="a-z">A-Z</option>
+    </select>
+  </div>
+
+  <div class="song-container">
+    <div class="song-row"
+         onclick="playSong(this)"
+         th:each="song : ${songs}"
+         th:attr="data-id=${song.id}, 
+                  data-title=${song.title}, 
+                  data-artist=${song.artist}, 
+                  data-genre=${song.genre}, 
+                  data-url=${song.url}, 
+                  data-thumb=${song.thumbnail}, 
+                  data-views=${song.views},
+                  data-created=${song.createdAt}">
+      <div class="thumb-wrapper">
+        <img th:src="${song.thumbnail != null ? song.thumbnail : '/img/song.jpeg'}" alt="Thumbnail" class="song-thumb" />
+        <div class="play-icon">&#9658;</div>
+      </div>
+      <div class="song-info" style="flex:1">
+        <div class="song-title" th:text="${song.title}">Song Title</div>
+        <div class="song-meta" th:text="${song.artist} + ' • ' + ${song.genre}">Artist • Genre</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="playerBar">
+    <img id="playerThumb" src="/img/song.jpeg" alt="Thumbnail" />
+    <div class="player-info">
+      <div id="playerTitle">Not Playing</div>
+      <div id="playerArtist">---</div>
+    </div>
+    <audio id="audioPlayer" controls></audio>
+  </div>
+
+  <script>
+    const searchInput = document.querySelector('.search-input');
+    const sortSelect = document.querySelector('.sort-select');
+    const songContainer = document.querySelector('.song-container');
+    const allSongs = Array.from(songContainer.children);
+
+    function playSong(el) {
+      const title = el.dataset.title;
+      const artist = el.dataset.artist;
+      const url = el.dataset.url;
+      const thumb = el.dataset.thumb;
+
+      document.getElementById('playerTitle').textContent = title;
+      document.getElementById('playerArtist').textContent = artist;
+      document.getElementById('playerThumb').src = thumb || '/img/song.jpeg';
+
+      const audio = document.getElementById('audioPlayer');
+      audio.src = url;
+      audio.play();
+    }
+
+    function renderFilteredSongs() {
+      const keyword = searchInput.value.toLowerCase();
+      const sortValue = sortSelect.value;
+
+      let filtered = allSongs.filter(row => {
+        const title = row.dataset.title.toLowerCase();
+        const artist = row.dataset.artist.toLowerCase();
+        const genre = row.dataset.genre.toLowerCase();
+        return title.includes(keyword) || artist.includes(keyword) || genre.includes(keyword);
+      });
+
+      if (sortValue === 'a-z') {
+        filtered.sort((a, b) => a.dataset.title.localeCompare(b.dataset.title));
+      } else if (sortValue === 'latest') {
+        filtered.sort((a, b) => new Date(b.dataset.created) - new Date(a.dataset.created));
+      } else if (sortValue === 'popular') {
+        filtered.sort((a, b) => parseInt(b.dataset.views) - parseInt(a.dataset.views));
+      }
+
+      songContainer.innerHTML = '';
+      filtered.forEach(song => songContainer.appendChild(song));
+    }
+
+    searchInput.addEventListener('input', renderFilteredSongs);
+    sortSelect.addEventListener('change', renderFilteredSongs);
+
+    // Initial render
+    renderFilteredSongs();
+  </script>
+
+</body>
+</html>

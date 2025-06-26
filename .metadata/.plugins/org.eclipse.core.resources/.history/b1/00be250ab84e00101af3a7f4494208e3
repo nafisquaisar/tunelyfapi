@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tunelyf Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+	* {
+	  margin: 0;
+	  padding: 0;
+	  box-sizing: border-box;
+	}
+
+	body {
+	  font-family: 'Poppins', sans-serif;
+	  background: linear-gradient(135deg, #141E30, #243B55);
+	  color: #fff;
+	  padding: 20px;
+	}
+
+	/* HEADER */
+	.main-header {
+	  background-color: #1f2a40;
+	  padding: 15px 25px;
+	  border-radius: 12px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+	}
+
+	.logo {
+	  font-size: 20px;
+	  font-weight: 600;
+	}
+
+	.nav-links a {
+	  margin: 0 12px;
+	  color: #ddd;
+	  text-decoration: none;
+	  font-weight: 500;
+	  transition: color 0.3s ease;
+	}
+
+	.nav-links a:hover {
+	  color: #4db8ff;
+	}
+
+	.logout-btn {
+	  background-color: #4db8ff;
+	  border: none;
+	  padding: 8px 16px;
+	  border-radius: 8px;
+	  color: white;
+	  font-weight: 600;
+	  cursor: pointer;
+	  transition: background-color 0.3s ease;
+	}
+
+	.logout-btn:hover {
+	  background-color: #3399ff;
+	}
+
+	/* SEARCH + SORT */
+	.search-sort-bar {
+	  display: flex;
+	  justify-content: space-between;
+	  margin: 25px 0;
+	}
+
+	.search-input {
+	  width: 60%;
+	  padding: 10px 14px;
+	  border-radius: 8px;
+	  border: 1px solid #394b6b;
+	  background-color: #2d3e5f;
+	  color: white;
+	}
+
+	.search-input::placeholder {
+	  color: #bbb;
+	}
+
+	.sort-select {
+	  padding: 10px;
+	  border-radius: 8px;
+	  border: 1px solid #394b6b;
+	  background-color: #2d3e5f;
+	  color: white;
+	}
+
+	/* SONG LIST */
+	.song-list {
+	  display: grid;
+	  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	  gap: 20px;
+	}
+
+	.song-card {
+	  background-color: #1f2a40;
+	  padding: 20px;
+	  border-radius: 12px;
+	  border: 1px solid #394b6b;
+	  transition: transform 0.2s ease;
+	}
+
+	.song-card:hover {
+	  transform: translateY(-4px);
+	}
+
+	.song-card h3 {
+	  color: #4db8ff;
+	  margin-bottom: 5px;
+	}
+
+	.song-card p {
+	  color: #aaa;
+	  font-size: 14px;
+	}
+
+  </style>
+  
+</head>
+<body>
+  <header class="main-header">
+	<p style="color: red;">Test if this is visible</p>
+
+    <div class="logo">🎵 Tunelyf</div>
+    <nav class="nav-links">
+      <a href="#">All Songs</a>
+      <a href="#">Upload Song</a>
+      <a href="#">Genres & Artists</a>
+    </nav>
+	<div th:if="${param.logout}" class="logout-message">
+	    You have been logged out successfully.
+	</div>
+
+	<form action="/logout" method="post" style="margin: 0;">
+	    <button class="logout-btn" type="submit">Logout</button>
+	  </form>
+  </header>
+
+  <div class="search-sort-bar">
+    <input type="text" placeholder="Search songs..." class="search-input" />
+    <select class="sort-select">
+      <option value="latest">Sort by: Latest</option>
+      <option value="popular">Most Popular</option>
+      <option value="a-z">A-Z</option>
+    </select>
+  </div>
+
+  <div class="song-list">
+    <!-- Placeholder cards -->
+    <div class="song-card">
+      <h3>Song Title</h3>
+      <p>Artist Name • Genre</p>
+    </div>
+    <div class="song-card">
+      <h3>Another Song</h3>
+      <p>Artist 2 • Genre</p>
+    </div>
+  </div>
+</body>
+</html>

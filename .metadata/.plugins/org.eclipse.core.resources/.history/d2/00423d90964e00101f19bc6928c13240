@@ -1,0 +1,5 @@
+package com.tunelyf.nf.service;
+
+public class FavoriteService {
+
+}

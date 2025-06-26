@@ -1,0 +1,5 @@
+package com.tunelyf.nf.model;
+
+public class User {
+
+}

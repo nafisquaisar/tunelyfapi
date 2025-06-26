@@ -1,0 +1,6 @@
+# Give frontend a unique name
+spring.application.name=TunelyfUI
+server.port=8081
+
+# Backend base URL (adjust as needed)
+backend.api.url=http://localhost:8080/api

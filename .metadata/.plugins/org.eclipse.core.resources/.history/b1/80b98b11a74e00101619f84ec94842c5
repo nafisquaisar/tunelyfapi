@@ -1,0 +1,55 @@
+package com.tunelyf.nf.controller;
+
+import com.tunelyf.nf.model.Song;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${backend.api.url}")
+    private String backendUrl;
+
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        String url = backendUrl + "/songs";
+        List<Song> songs = List.of(restTemplate.getForObject(url, Song[].class));
+        model.addAttribute("songs", songs);
+        return "dashboard";
+    }
+
+    @GetMapping("/upload")
+    public String uploadForm(Model model) {
+        model.addAttribute("song", new Song());
+        return "upload";
+    }
+
+    @PostMapping("/upload")
+    public String uploadSong(@ModelAttribute Song song) {
+        String url = backendUrl + "/songs/upload";
+        restTemplate.postForObject(url, song, Song.class);
+        return "redirect:/admin/dashboard";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteSong(@PathVariable Long id) {
+        String url = backendUrl + "/songs/" + id;
+        restTemplate.delete(url);
+        return "redirect:/admin/dashboard";
+    }
+}

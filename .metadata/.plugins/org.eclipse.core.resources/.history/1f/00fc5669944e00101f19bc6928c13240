@@ -1,0 +1,60 @@
+package com.tunelyf.nf.controller;
+
+import com.tunelyf.nf.model.Playlist;
+import com.tunelyf.nf.service.PlaylistService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/playlists")
+@CrossOrigin(origins = "*")
+public class PlaylistController {
+
+    @Autowired
+    private PlaylistService playlistService;
+
+    // Create new playlist
+    @PostMapping
+    public ResponseEntity<Playlist> createPlaylist(@RequestBody Playlist playlist) {
+        Playlist saved = playlistService.createPlaylist(playlist);
+        return ResponseEntity.ok(saved);
+    }
+
+    // Get all playlists by UID
+    @GetMapping("/user/{uid}")
+    public ResponseEntity<List<Playlist>> getPlaylists(@PathVariable String uid) {
+        List<Playlist> playlists = playlistService.getPlaylistsByUid(uid);
+        return ResponseEntity.ok(playlists);
+    }
+
+    // Get a single playlist by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPlaylist(@PathVariable Long id) {
+        Optional<Playlist> playlist = playlistService.getPlaylistById(id);
+        return playlist.isPresent()
+                ? ResponseEntity.ok(playlist.get())
+                : ResponseEntity.notFound().build();
+    }
+
+    // Update a playlist
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePlaylist(@PathVariable Long id, @RequestBody Playlist playlist) {
+        Playlist updated = playlistService.updatePlaylist(id, playlist);
+        return updated != null
+                ? ResponseEntity.ok(updated)
+                : ResponseEntity.notFound().build();
+    }
+
+    // Delete a playlist
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePlaylist(@PathVariable Long id) {
+        boolean deleted = playlistService.deletePlaylist(id);
+        return deleted
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+}

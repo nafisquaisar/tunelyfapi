@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Song | Tunelyf</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #141E30, #243B55);
+      color: #fff;
+      padding: 20px;
+    }
+
+    .main-header {
+      background-color: #1f2a40;
+      padding: 10px 20px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-links a {
+      margin: 0 12px;
+      color: #ddd;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #4db8ff;
+    }
+
+    .nav-links a.active {
+      color: #4db8ff;
+      background-color: #2d3e5f;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: 1px solid #4db8ff;
+    }
+
+    form[action="/logout"] {
+      margin: 0;
+    }
+
+    .logout-btn {
+      background-color: #4db8ff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #3399ff;
+    }
+
+    .form-container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #1f2a40;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+
+    .form-container h2 {
+      margin-bottom: 20px;
+      color: #4db8ff;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #394b6b;
+      background-color: #2d3e5f;
+      color: white;
+    }
+
+    input::placeholder {
+      color: #bbb;
+    }
+
+    .drop-zone {
+      border: 2px dashed #4db8ff;
+      padding: 20px;
+      text-align: center;
+      border-radius: 10px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .drop-zone:hover {
+      background-color: #2d3e5f;
+    }
+
+    .preview-img {
+      width: 100%;
+      max-width: 200px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 2px solid #4db8ff;
+    }
+
+    .filename-preview {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    button {
+      margin-top: 25px;
+      background-color: #4db8ff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #3399ff;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 20px;
+      color: #4db8ff;
+      text-align: center;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">🎵 Tunelyf</div>
+    <nav class="nav-links">
+      <a th:href="@{/admin/dashboard}" th:classappend="${currentUri == '/admin/dashboard'} ? 'active'">All Songs</a>
+      <a th:href="@{/admin/upload}" th:classappend="${currentUri == '/admin/upload'} ? 'active'">Upload Song</a>
+      <a th:href="@{/admin/genres}" th:classappend="${currentUri == '/admin/genres'} ? 'active'">Genres</a>
+      <a th:href="@{/admin/artists}" th:classappend="${currentUri == '/admin/artists'} ? 'active'">Artist</a>
+    </nav>
+    <form action="/logout" method="post">
+      <button class="logout-btn" type="submit">Logout</button>
+    </form>
+  </header>
+
+  <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+    <p th:text="${successMessage}"></p>
+  </div>
+
+  <div class="form-container">
+    <h2>Upload New Song</h2>
+    <form th:action="@{/admin/uploadsong}" th:object="${song}" method="post" enctype="multipart/form-data">
+      <label>Title:</label>
+      <input type="text" th:field="*{title}" placeholder="Enter song title" required />
+
+      <label>Artist:</label>
+      <input type="text" th:field="*{artist}" placeholder="Enter artist name" required />
+
+      <label>Genre:</label>
+      <input type="text" th:field="*{genre}" placeholder="e.g. Pop, Rock, Hip-Hop" required />
+
+      <label>Thumbnail:</label>
+      <div class="drop-zone" onclick="document.getElementById('thumbInput').click();">
+        Drop or select thumbnail image
+      </div>
+      <input type="file" id="thumbInput" name="thumbnailFile" accept="image/*" style="display:none" onchange="previewImage(event)" />
+      <img id="thumbPreview" class="preview-img" style="display:none" />
+
+      <label>Song File:</label>
+      <div class="drop-zone" onclick="document.getElementById('songInput').click();">
+        Drop or select song file
+      </div>
+      <input type="file" id="songInput" name="songFile" accept="audio/*" style="display:none" onchange="previewAudioName(event)" />
+      <div class="filename-preview" id="songNamePreview"></div>
+
+      <button type="submit">Upload Song</button>
+    </form>
+    <a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <script>
+    function previewImage(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById('thumbPreview');
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          preview.src = reader.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function previewAudioName(event) {
+      const file = event.target.files[0];
+      const nameDisplay = document.getElementById('songNamePreview');
+      if (file) {
+        nameDisplay.textContent = "Selected file: " + file.name;
+      }
+    }
+  </script>
+</body>
+</html>

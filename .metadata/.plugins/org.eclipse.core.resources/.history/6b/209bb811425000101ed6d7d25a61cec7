@@ -1,0 +1,22 @@
+package com.tunelyf.nf.controller;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+@ControllerAdvice
+public class GlobalModelAttributes {
+
+    @ModelAttribute("currentUri")
+    public String currentUri(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
+    
+    @ExceptionHandler(SongNotFoundException.class)
+    public String handleSongNotFound(SongNotFoundException ex, Model model) {
+        model.addAttribute("error", ex.getMessage());
+        model.addAttribute("currentUri", "/admin/genres"); // fallback
+        return "error-page"; // You can create error-page.html in templates
+    }
+}
+

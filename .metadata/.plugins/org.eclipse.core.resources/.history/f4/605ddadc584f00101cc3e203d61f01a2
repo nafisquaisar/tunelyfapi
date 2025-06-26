@@ -1,0 +1,20 @@
+package com.tunelyf.nf.service;
+
+
+import com.tunelyf.nf.model.Song;
+import java.util.List;
+
+public interface SongService {
+    List<Song> getAllVisibleSongs();
+    List<Song> getSongsByArtist(String artist);
+    List<Song> getSongsByGenre(String genre);
+    Song uploadSong(Song song);
+    Song updateSong(Long id, Song newSong);
+    void deleteSong(Long id);
+    Song toggleHideSong(Long id);
+    void recordPlayback(String uid, Long songId);
+    List<Song> getRecentlyPlayedSongs(String uid);
+    List<Song> searchSongs(String query);
+    List<Song> getTrendingSongs();
+
+}

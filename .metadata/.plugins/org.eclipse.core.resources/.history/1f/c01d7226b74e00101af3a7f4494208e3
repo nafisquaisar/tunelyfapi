@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tunelyf Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">🎵 Tunelyf</div>
+    <nav class="nav-links">
+      <a href="#">All Songs</a>
+      <a href="#">Upload Song</a>
+      <a href="#">Genres & Artists</a>
+    </nav>
+    <button class="logout-btn">Logout</button>
+  </header>
+
+  <div class="search-sort-bar">
+    <input type="text" placeholder="Search songs..." class="search-input" />
+    <select class="sort-select">
+      <option value="latest">Sort by: Latest</option>
+      <option value="popular">Most Popular</option>
+      <option value="a-z">A-Z</option>
+    </select>
+  </div>
+
+  <div class="song-list">
+    <!-- Placeholder cards -->
+    <div class="song-card">
+      <h3>Song Title</h3>
+      <p>Artist Name • Genre</p>
+    </div>
+    <div class="song-card">
+      <h3>Another Song</h3>
+      <p>Artist 2 • Genre</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+package com.tunelyf.nf.controller;
+
+import com.tunelyf.nf.model.Song;
+import com.tunelyf.nf.service.SongService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    @Autowired
+    private SongService songService;
+
+    // Show login page (Spring Security will redirect here automatically)
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";  // maps to login.html
+    }
+
+    // Show admin dashboard after login
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("songs", songService.getAllSongs());
+        return "dashboard";  // maps to dashboard.html
+    }
+
+    // Show upload song form
+    @GetMapping("/upload")
+    public String uploadForm(Model model) {
+        model.addAttribute("song", new Song());
+        return "upload";
+    }
+
+    // Handle form submission for uploading a song
+    @PostMapping("/upload")
+    public String uploadSong(@ModelAttribute Song song) {
+        songService.uploadSong(song);
+        return "redirect:/admin/dashboard";
+    }
+
+    // Delete a song
+    @GetMapping("/delete/{id}")
+    public String deleteSong(@PathVariable Long id) {
+        songService.deleteSong(id);
+        return "redirect:/admin/dashboard";
+    }
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;Tunelyf/src/main/resources/firebase/work-progress-387ac-firebase-adminsdk-i16uk-affca3a130.json&apos; to &apos;serviceAccountKey.json&apos;" description="Rename resource &apos;work-progress-387ac-firebase-adminsdk-i16uk-affca3a130.json&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/resources/firebase/work-progress-387ac-firebase-adminsdk-i16uk-affca3a130.json" name="serviceAccountKey.json" stamp="1750589098839" updateReferences="true"/>
+</session>

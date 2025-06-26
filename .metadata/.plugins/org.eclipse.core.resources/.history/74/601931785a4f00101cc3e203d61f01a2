@@ -1,0 +1,15 @@
+# Give frontend a unique name
+spring.application.name=TunelyfUI
+server.port=8082
+
+# Backend base URL (adjust as needed)
+backend.api.url=http://localhost:8080/api
+
+
+spring.web.resources.static-locations=classpath:/static/
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+
+
+spring.security.user.name=admin
+spring.security.user.password=admin123

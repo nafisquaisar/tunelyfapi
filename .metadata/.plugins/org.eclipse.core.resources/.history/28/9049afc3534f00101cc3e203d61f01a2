@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Upload Song</title>
+</head>
+<body>
+    <h2>Upload New Song</h2>
+    <form th:action="@{/admin/upload}" th:object="${song}" method="post">
+        <label>Title:</label>
+        <input type="text" th:field="*{title}" required /><br/>
+
+        <label>Artist:</label>
+        <input type="text" th:field="*{artist}" required /><br/>
+
+        <label>Genre:</label>
+        <input type="text" th:field="*{genre}" required /><br/>
+
+        <label>Thumbnail URL:</label>
+        <input type="text" th:field="*{thumbnail}" /><br/>
+
+        <label>Song URL:</label>
+        <input type="text" th:field="*{url}" required /><br/>
+
+        <button type="submit">Upload</button>
+    </form>
+    <a href="/admin/dashboard">Back to Dashboard</a>
+</body>
+</html>

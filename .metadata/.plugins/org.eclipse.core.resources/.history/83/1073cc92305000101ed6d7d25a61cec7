@@ -1,0 +1,20 @@
+package com.tunelyf.nf.service;
+
+@Service
+public class GenreService {
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    public List<Genre> getAllGenres() {
+        return genreRepository.findAll();
+    }
+
+    public Genre getGenreById(Long id) {
+        return genreRepository.findById(id).orElse(null);
+    }
+
+    public Genre saveGenre(Genre genre) {
+        return genreRepository.save(genre);
+    }
+}
