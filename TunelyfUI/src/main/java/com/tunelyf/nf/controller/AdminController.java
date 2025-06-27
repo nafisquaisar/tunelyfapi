@@ -106,7 +106,7 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        String url = backendUrl + "/songs/allsong";
+        String url = backendUrl + "/songs";
         Song[] songArray = restTemplate.getForObject(url, Song[].class);
         List<Song> songs = songArray != null ? Arrays.asList(songArray) : Collections.emptyList();
 
