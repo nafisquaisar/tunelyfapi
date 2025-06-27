@@ -2,6 +2,7 @@ package com.tunelyf.nf.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tunelyf.nf.DTO.ArtistDTO;
-import com.tunelyf.nf.exception.SongNotFoundException;
 import com.tunelyf.nf.model.Song;
 
 @Controller
@@ -107,8 +107,9 @@ public class AdminController {
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         String url = backendUrl + "/songs/allsong";
-        List<Song> songs = List.of(restTemplate.getForObject(url, Song[].class));
-       
+        Song[] songArray = restTemplate.getForObject(url, Song[].class);
+        List<Song> songs = songArray != null ? Arrays.asList(songArray) : Collections.emptyList();
+
         model.addAttribute("songs", songs);
         return "dashboard";
     }

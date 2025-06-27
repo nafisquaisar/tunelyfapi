@@ -346,6 +346,11 @@
     </select>
   </div>
 
+  <!-- If songs list is empty -->
+   <div th:if="${#lists.isEmpty(songs)}" style="grid-column: span 2; text-align: center; font-size: 18px; color: #bbb;">
+     No songs available 🎧
+   </div>
+   
   <div class="song-container">
 	<div class="song-row"
 		onclick="playSong(this)"
